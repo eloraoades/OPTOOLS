@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "OPTOOLS",
+			"path": "."
+		},
+		{
+			"name": "env",
+			"path": "../../../Projects/OPTOOLS/env"
+		}
+	],
+	"settings": {}
+}

@@ -1,0 +1,24 @@
+PYTHON/simulator_functions.py
+    LOC: 167
+    LLOC: 90
+    SLOC: 90
+    Comments: 61
+    Single comments: 52
+    Multi: 0
+    Blank: 25
+    - Comment Stats
+        (C % L): 37%
+        (C % S): 68%
+        (C + M % L): 37%
+** Total **
+    LOC: 167
+    LLOC: 90
+    SLOC: 90
+    Comments: 61
+    Single comments: 52
+    Multi: 0
+    Blank: 25
+    - Comment Stats
+        (C % L): 37%
+        (C % S): 68%
+        (C + M % L): 37%

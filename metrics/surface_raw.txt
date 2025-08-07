@@ -1,0 +1,24 @@
+PYTHON/surface_simulation_functions.py
+    LOC: 525
+    LLOC: 350
+    SLOC: 364
+    Comments: 93
+    Single comments: 84
+    Multi: 0
+    Blank: 77
+    - Comment Stats
+        (C % L): 18%
+        (C % S): 26%
+        (C + M % L): 18%
+** Total **
+    LOC: 525
+    LLOC: 350
+    SLOC: 364
+    Comments: 93
+    Single comments: 84
+    Multi: 0
+    Blank: 77
+    - Comment Stats
+        (C % L): 18%
+        (C % S): 26%
+        (C + M % L): 18%
