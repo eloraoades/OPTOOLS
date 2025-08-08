@@ -1,3 +1,7 @@
+"""
+The following file is not to be changed from it's original form. 
+"""
+# 
 # #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # ==================================================================================
@@ -558,17 +562,3 @@ def spectrum_k_to_f(Ek,k,D=None):
     shEk2 = np.shape(Ek)
     Ef = np.swapaxes(Ek/np.broadcast_to(dfdk,shEk2),-1,ind0)
     return Ef, f
-    
-'''
-def PM_spectrum_k(k,fm,g=9.81):
-    pmofk(k,T0,H)
-    alpha=8.1*10**-3
-    
-    w0=2*np.pi/T0
-    w=np.sqrt(g*k*tanh(k*H))
-    Cg=(0.5+k.*H/sinh(2.*k.*H)).*w./k;
-    pmofk=0.008.*g.^2.*exp(-0.74.*(w./w0).^(-4))./(w.^5).*Cg+5.9;
-    
-    E = alpha*g**2*(2*np.pi)**-4*f**-5*np.exp((-5/4)*((fm/f)**4))
-    return E
-'''

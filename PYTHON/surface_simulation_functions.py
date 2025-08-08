@@ -3,13 +3,16 @@
 # ==================================================================================
 # === 0. Import Packages ===========================================================
 # ==================================================================================
-from wave_physics_functions import *
+
 import scipy.special as sps # function erf
 import scipy.interpolate as spi # function griddata
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import fftconvolve
 import xarray as xr    # only used for filters: this dependency should be removed
+from wave_physics_functions import *
+
+
 
 def surface_1D_from_Z1kx(Z1,kX,i,nx=None,dx=None,dkx=None):
         if nx is None:
@@ -349,11 +352,11 @@ def custom_plots_surf(ax,im,iskm=1,alongT_isY=1,labelcb=None):
 
 def custom_plots_spec(ax,im,iswnb=1,alongT_isY=1,klim=None,labelcb=None):
     if iswnb:
-        xlb = '$k_x$ [rad/m]'
-        ylb = '$k_x$ [rad/m]'
+        xlb = r'$k_x$ [rad/m]'
+        ylb = r'$k_x$ [rad/m]'
     else:
-        xlb = '$k_x / 2 \pi$ [km$^{-1}$]'
-        ylb = '$k_y / 2 \pi$ [km$^{-1}$]'
+        xlb = r'$k_x / 2\pi$ [km$^{-1}$]'
+        ylb = r'$k_y / 2\pi$ [km$^{-1}$]'
     
     if alongT_isY:
         ax.set_xlabel(ylb)
