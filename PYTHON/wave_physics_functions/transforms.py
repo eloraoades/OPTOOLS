@@ -1,11 +1,94 @@
-"""
-The following code has been adapted from the original file "wave_physiscs_functions.py" within the OPTOOLS repository.
-It contains functions for spectral transformations, including Jacobians and variable changes.
-"""
+# The following code was originally a part of the OPTOOLS project, developed by Fabrice Ardhuin & Marina de Carlo. 
+# The original repo can be found at https://github.com/ardhuin/OPTOOLS.git 
+
+# This file has been adapted from the original file "wave_physiscs_functions.py" (OPTOOLS/PYTHON) & contains 
+# functions to define spectral transformations, including the conversion of wave spectra from frequency-direction 
+# space to wavenumber-direction space, and vice versa.
+
 
 import numpy as np
 import sys
-from dispersion import group_speed_from_k, k_from_f, f_from_k
+from scipy.interpolate import griddata
+from wave_physics_functions.dispersion import group_speed_from_k, k_from_f, f_from_k
+
+
+def wavespec_Efth_to_Ekxky(eft1s,
+                           fren,
+                           dfreq,
+                           dirn,
+                           dth,
+                           dkx=0.0001, dky=0.0001,
+                           nkx=250, nky=250,
+                           doublesided=1,
+                           verbose=0,
+                           trackangle=0
+                           ):
+    """
+    Converts E(f,theta) spectrum from buoy or model to E(kx,ky) spectrum similar to image spectrum
+    using griddata interpolation. 
+    2023/11/14: preliminary version, assumes dfreq is symmetric (not eaxctly true with WW3 output and waverider data) 
+    
+    Parameters: 
+        etfs1 : spectrum in frequency and direction space
+        fren : frequency axis
+        dfreq : frequency step
+        dirn : directional axis
+        dth : direction step
+        dkx : wavenumber step in x direction (default = 0.0001)
+        dky : wavenumber step in y direction (default = 0.0001)
+        nkx : number of wavenumber points in x direction (default =
+    Returns: 
+        Ekxky: spectrum
+        kx: wavenumber in [1/m]  
+    """
+    
+    [nf, nt] = np.shape(eft1s)
+    tpi = 2*np.pi
+    grav = 9.81
+
+    # makes a double sided spectrum
+    if doublesided == 1:
+        eftn = 0.5*(eft1s+np.roll(eft1s, nt//2, axis=1))
+    else:
+        eftn = eft1s
+    Hs1 = 4*np.sqrt(np.sum(np.sum(eftn, axis=1) * dfreq)*dth)
+
+    # wraps around directions
+    dlast = dirn[0]+360.
+    dirm = np.concatenate([dirn, [dlast]])
+    elast = eftn[:, 0]
+    eftm1 = np.concatenate([eftn.T, [elast]]).T
+
+    # adds zero energy in a low frequency to avoid interpolation across k=0
+    ffirst = fren[0]-0.9*(fren[1]-fren[0])
+    frem = np.concatenate([[ffirst], fren])
+    efirst = eftm1[0, :]*0
+    eftm = np.concatenate([[efirst], eftm1])
+
+    # plt.pcolormesh(fren, dirm, np.log10(eftm).T)
+    km = (2*np.pi*frem)**2/(grav*2*np.pi)   # cycles / meter
+    km2 = np.tile(km.reshape(nf+1, 1), (1, nt+1))
+
+    # eftn*df*dth = Ek*k*dk*dth -> Ek = efth *df /(k * dk)  =  efth *Cg /k
+    Cg2 = np.sqrt(grav/(km2*tpi))*0.5
+    Jac = Cg2/km2
+    dirm2 = np.tile(dirm.T, (nf+1, 1))*np.pi/180.
+    kxn = km2*np.cos(dirm2+trackangle)
+    kyn = km2*np.sin(dirm2+trackangle)
+    # plt.scatter(kxn,kyn,  marker='.', s = 20)
+    kx = np.linspace(-nkx*dkx, (nkx-1)*dkx, nkx*2)
+    ky = np.linspace(-nky*dky, (nky-1)*dky, nky*2)
+    # should we transpose kx2 and ky2 ???
+    kx2, ky2 = np.meshgrid(kx, ky, indexing='ij')
+    Ekxky = griddata((kxn.flatten(), kyn.flatten()),
+                     (eftm*Jac).flatten(), (kx2, ky2), method='nearest')
+    Hs2 = 4*np.sqrt(np.sum(np.sum(Ekxky))*dkx*dky)
+
+    # make sure energy is exactly conserved (assuming kmax is consistent with fmax
+    if verbose == 1:
+        print('Hs1,Hs2:', Hs1, Hs2)
+    Ekxky = Ekxky * (Hs1/Hs2)**2
+    return Ekxky, kx, ky, kx2, ky2
 
 
 def dfdk_from_k(k, h=None):

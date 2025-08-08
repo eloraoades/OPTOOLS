@@ -1,5 +1,11 @@
-import numpy as np
+# The following code was originally a part of the OPTOOLS project, developed by Fabrice Ardhuin & Marina de Carlo. 
+# The original repo can be found at https://github.com/ardhuin/OPTOOLS.git 
 
+# This file has been adapted from the original file "wave_physiscs_functions.py" (OPTOOLS/PYTHON) & contains 
+# functions to define the phase speed, group speed, and other dispersion-related calculations.
+
+
+import numpy as np
 
 def phase_speed_from_k(k, h=None, g=9.81):
     """

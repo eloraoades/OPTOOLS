@@ -1,0 +1,21 @@
+    
+    ########################################################################################
+    # obtain dkx, dky from dx and dy in order to account for eventual rounding of np.pi	   
+    # considering that dkx has been defined according to the surface requisite (nx,dx)     
+    # Eg:	                                                                           
+    # # initialisation to compute spectrum                                                 
+    # nx = 205										
+    # dx = 10										
+    # dkx = 2*np.pi/(dx*nx)								
+    # kX0 = dkx*np.arange(-nx//2+1,nx//2+1)						
+    # 											
+    # # Compute from kX0 and nx (found from kX0.shape)					
+    # dkx2 = kX0[1] - kX0[0]								
+    # dxbis = (2*np.pi)/(dkx2*nx)                                                           
+    # dkx3 = 2*np.pi/(dxbis*nx)								
+    # #
+    # print('dkx = ',dkx)     		=> 0.0030649684425266273			
+    # print('dkx2 = ',dkx2) 		=> 0.0030649684425266277			
+    # print('dkx3 = ',dkx3) 		=> 0.0030649684425266273                           
+    #                                                                                      
+    ########################################################################################
