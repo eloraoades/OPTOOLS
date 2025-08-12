@@ -28,11 +28,11 @@ def custom_plots_surf(ax, im, iskm=1, alongT_isY=1, labelcb=None):
 
 def custom_plots_spec(ax, im, iswnb=1, alongT_isY=1, klim=None, labelcb=None):
     if iswnb:
-        xlb = '$k_x$ [rad/m]'
-        ylb = '$k_x$ [rad/m]'
+        xlb = r'$k_x$ [rad/m]'
+        ylb = r'$k_x$ [rad/m]'
     else:
-        xlb = '$k_x / 2 \pi$ [km$^{-1}$]'
-        ylb = '$k_y / 2 \pi$ [km$^{-1}$]'
+        xlb = r'$k_x / 2 \pi$ [km$^{-1}$]'
+        ylb = r'$k_y / 2 \pi$ [km$^{-1}$]'
 
     if alongT_isY:
         ax.set_xlabel(ylb)

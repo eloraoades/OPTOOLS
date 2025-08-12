@@ -1,9 +1,6 @@
 import numpy as np
 from scipy.interpolate import griddata
 from wave_physics_functions.transforms import spectrum_from_kth_to_kxky, wavespec_Efth_to_Ekxky
-from typing import Optional, tuple
-
-import numpy as np
 
 
 def surface_1D_from_Z1kx(
@@ -627,9 +624,9 @@ def surface_from_Z1kxky(
     kX0 = np.unique(kX)  # [rad/m]
     kY0 = np.unique(kY)  # [rad/m]
 
-    if nx == None:
+    if nx is None:
         nx = Z1.shape[1]
-    if ny == None:
+    if ny is None:
         ny = Z1.shape[0]
 
     # Half-grid offsets (legacy centering helpers)
@@ -637,24 +634,24 @@ def surface_from_Z1kxky(
     shy = np.floor(ny/2-1)
 
     # Infer dx from dkx (or from kX0 spacing) without changing logic
-    if (dx == None):
-        if dkx == None:
+    if (dx is None):
+        if dkx is None:
             dx = 2*np.pi/((kX0[1] - kX0[0])*nx)  # [m]
         else:
             dx = 2*np.pi/(dkx*nx)                # [m]
 
     # Infer dy from dky (or from kY0 spacing). Note the original had a floor().
-    if (dy == None):
-        if dky == None:
+    if (dy is None):
+        if dky is None:
             dy = np.floor(2*np.pi/((kY0[1] - kY0[0])*ny))  # [m]
             # TODO: The floor() here is unusual and can distort dy; consider removing in refactor.
         else:
             dy = 2*np.pi/(dky*ny)                          # [m]
 
     # Back-compute dkx, dky if still None.
-    if (dkx == None):
+    if (dkx is None):
         dkx = 2*np.pi/(dx*nx)  # [rad/m]
-    if (dky == None):
+    if (dky is None):
         dky = 2*np.pi/(dy*ny)  # [rad/m]
 
     # Random array: normal(0,1) then used as phase -> exp(i 2π rg). See note above.
@@ -726,17 +723,14 @@ def surface_from_Z1kxky_uniform_phase(
         Spectral steps [rad/m].
     """
 
+    # Grid sizes 
     kX0 = np.unique(kX)  # [rad/m]
     kY0 = np.unique(kY)  # [rad/m]
 
-    if nx == None:
+    if nx is None:
         nx = Z1.shape[1]
-    if ny == None:
+    if ny is None:
         ny = Z1.shape[0]
-
-    # Legacy “half-grid” offsets; kept for compatibility (not used further here).
-    shx = np.floor(nx/2-1)
-    shy = np.floor(ny/2-1)
 
     # Infer dx,dy from dkx,dky (or from kX0,kY0 spacing)
     if (dx == None):
@@ -745,17 +739,19 @@ def surface_from_Z1kxky_uniform_phase(
         else:
             dx = 2*np.pi/(dkx*nx)                # [m]
 
-    if (dy == None):
+    if dy == None:
         if dky == None:
-            dy = np.floor(2*np.pi/((kY0[1] - kY0[0])*ny))  # [m]
+            # dy = np.floor(2*np.pi/((kY0[1] - kY0[0])*ny))  # [m]
+            dy = 2*np.pi/((kY0[1] - kY0[0])*ny)  # [m]
             # TODO: floor() again; consider removing in refactor.
         else:
-            dy = 2*np.pi/(dky*ny)                          # [m]
+            dy = 2*np.pi / (dky * ny)                          # [m]
 
-    if (dkx == None):
-        dkx = 2*np.pi/(dx*nx)  # [rad/m]
-    if (dky == None):
-        dky = 2*np.pi/(dy*ny)  # [rad/m]
+    # --- Back-compute dkx, dky from spatial steps for self-consistency ---
+    if dkx is None:
+        dkx = 2*np.pi / (dx * nx)  # [rad/m]
+    if dky is None:
+        dky = 2*np.pi / (dy * ny)  # [rad/m]
 
     # Seeded uniform random phases u ∈ [0,1)
     rng = np.random.default_rng(i)
@@ -763,7 +759,8 @@ def surface_from_Z1kxky_uniform_phase(
     rg = rng.uniform(low=0.0, high=1.0, size=(ny, nx))
 
     # Build complex spectrum with correct amplitude and uniform phase, centered via ifftshift
-    zhats = np.fft.ifftshift(np.sqrt(2*Z1*dkx*dky) * np.exp(1j*2*np.pi*rg))
+    # Parseval: Var[η] = ∬ Z1 dkx dky; with norm="forward", use sqrt(Z1*dkx*dky) (×√2 for single-sided)
+    zhats = np.fft.ifftshift(np.sqrt(2.0 * Z1 * dkx * dky) * np.exp(1j * 2*np.pi * rg))
 
     # “Centered” kY, kX via ifftshift. # NOTE: Not used downstream, but kept intentionally.
     ky2D = np.fft.ifftshift(kY)

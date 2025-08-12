@@ -102,7 +102,7 @@ def dfdk_from_k(k, h=None):
     Returns:
         dfdk: Jacobian df/dk [Hz/(1/m)]
     """
-    Cg = group_speed_from_k(k, depth=h, g=9.81)
+    Cg = group_speed_from_k(k, h=h, g=9.81)
     return Cg/(2*np.pi)
 
 
